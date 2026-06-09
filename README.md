@@ -1,65 +1,144 @@
-<img width="6250" height="4181" alt="HERMES" src="https://github.com/user-attachments/assets/3fdb04f8-ad44-48a1-8808-55e5fc5da460" />
+# HERMES
 
-## Description
+**Hardware Environmental & Rotational Motion Evaluation Sensor**
 
-HERMES is my personal Swiss Army Board with a Gyro, Magnometer (GPS), Accelerometer, Pressure Sensor, Air Quality Sensor, Humidity Sensor and Temperature Sensor. Built as a YSWS project for my Hack Club RISE ILE. I designed it with the intent to use it as an IMU for a robotic dog but I turned it into a separate project after I realized that the dog would take longer than the timeframe available.
+HERMES is a USB-connected sensor board that reads motion, environmental, and GPS data and sends it to a computer in real time. The data is visualized in a browser dashboard that connects directly over Web Serial.
 
-## Why I Chose These Components
+> 🛰️ **Live dashboard:** https://owenxman.github.io/HERMES/
+> Works in desktop Chrome and Edge. Use **Demo data** if you don't have hardware connected.
 
-### USB-C Connector
+## What this is
 
-I chose USB-C because it's the current standard and makes the board easier to use with modern devices. It provides both power and data over a single connector, and the required CC resistors make it easy for the board to be recognized as a USB device.
+The board combines a 9-axis IMU, environmental sensor, and GPS module with an ATmega328 microcontroller. The microcontroller reads everything and streams it over USB serial to a computer.
 
-### AP2112K 3.3V Regulator
+The goal is simple: plug it in, open the dashboard, and see live motion + environmental data without any setup beyond a serial connection.
 
-The AP2112K was chosen to provide a stable 3.3V supply for the microcontroller and sensors. It only requires a few external components, is easy to implement, and can supply more than enough current for the application.
+## Hardware
 
-### FT231X USB-to-UART Converter
+| Part | What it does |
+|------|--------------|
+| **ICM-20948** | 9-axis IMU (accelerometer, gyroscope, magnetometer) |
+| **BME680** | Temperature, humidity, pressure, gas / VOC |
+| **GPS module** | Position data over UART |
+| **ATmega328-A** | Main microcontroller that reads sensors |
+| **FT231XS** | USB to serial bridge |
+| **AP2112K-3.3** | 3.3V regulator |
 
-I used the FT231X to handle USB communication and programming. It is a reliable and well-supported chip that makes it easy to connect the board to a computer for firmware uploads and serial communication.
+Connection: USB-C (power + data), 8 MHz clock, ICSP header for programming.
 
-### ATmega328PB
+## Dashboard
 
-The ATmega328PB was selected because it is a well-documented microcontroller with plenty of available resources and development tools. It provides all of the peripherals needed for this project while keeping the design simple and easy to work with.
+The dashboard is a single `index.html` file. There is no backend, no build system, and nothing to install.
 
-### 8 MHz Crystal
+It reads serial data from the board and visualizes it in real time:
 
-An external crystal was used to provide a more accurate clock source than the internal oscillator. This helps improve timing accuracy and ensures reliable communication with other devices.
+| View | Shows |
+|------|-------|
+| **Orientation** | 3D model that moves with roll, pitch, and yaw |
+| **Accelerometer** | X/Y/Z arrows + combined force vector |
+| **Magnetometer** | Compass-style heading display |
+| **Environment** | Live graphs for temperature, humidity, pressure, and gas |
+| **GPS** | Latitude, longitude, altitude, and satellite count |
+| **Raw telemetry** | Live serial log + update rate (Hz) |
 
-### BME680 Environmental Sensor
+Everything runs in the browser. The board connects directly to your computer using Web Serial, and nothing gets uploaded anywhere.
 
-I chose the BME680 because it combines temperature, humidity, pressure, and gas sensing into a single package. Using one sensor instead of several separate sensors reduces board space and simplifies the overall design.
+## How to run it
 
-### ICM-20948 IMU
+### Locally
 
-The ICM-20948 was selected because it combines a 3-axis accelerometer, gyroscope, and magnetometer into a single device. This allows the board to measure movement and orientation while keeping the component count low.
+Open `index.html` in Chrome or Edge. Click **Connect device**, select the FT231XS serial port, and set the baud rate (default is `115200`).
 
-### ISP Programming Header
+### Hosting it
 
-An ISP header was included so the microcontroller can be programmed directly if needed. This provides a backup programming method and makes debugging easier during development.
+Any static HTTPS host works — Web Serial requires HTTPS.
 
-### LEDs
+**GitHub Pages**
 
-Status LEDs were added to provide quick visual feedback. The power LED confirms the board is powered correctly, while the other LED can be used for debugging and status indication.
+1. Put `index.html` in the root of the repo.
+2. Go to **Settings → Pages**.
+3. Set **Source: Deploy from branch**, **Branch: `main` / `/root`**, then **Save**.
+4. The site will be live at `https://owenxman.github.io/HERMES/`.
 
-### Decoupling Capacitors
+Every push updates the site automatically.
 
-Decoupling capacitors were placed near each IC to help filter noise on the power rail and improve stability. These are standard design practice and help ensure reliable operation.
+Other options: Cloudflare Pages, Netlify, Vercel.
 
-### Reset Circuit
+### Browser support
 
-The reset circuit allows the microcontroller to be reset manually and also supports automatic reset during programming. This makes uploading firmware more convenient during development.
+Web Serial only works in Chromium-based browsers on desktop: **Chrome, Edge, Brave, Opera**.
 
-<img width="912" height="868" alt="image" src="https://github.com/user-attachments/assets/36e7a086-b9e8-4514-adac-807026a5774c" />
+Firefox, Safari, and mobile browsers will still load the page, but cannot connect to the board. Demo mode still works everywhere.
 
-## PCB
+## Serial format
 
-I routed the PCB with the intent to try and make the board as compact as possible. I got the board down to an overall footprint of around 40mm x 40mm. This became a major challenge with the amount of different decoupling capacitors and trying to fit everything where it was needed. 
+The board prints one line per update over serial. The dashboard tries to auto-detect the format. You can use any of:
 
-I added 3 mounting holes for M2 screws for easy integration into any case or project in the future.
+**JSON (recommended)**
 
-<img width="1337" height="712" alt="image" src="https://github.com/user-attachments/assets/8f6b3abd-53a8-4581-a180-75c006882f99" />
+```json
+{"roll":2.1,"pitch":-5,"yaw":143,"ax":0.01,"ay":0.0,"az":1.0,"heading":143,"temp":22.4,"hum":41,"pres":1012.8,"gas":52000,"lat":44.47,"lon":-73.21,"alt":61,"sats":9}
+```
 
-## Frontend
+**key=value**
 
+```
+roll=2.1 pitch=-5 yaw=143 ax=0.01 ay=0 az=1 temp=22.4 hum=41 pres=1012.8 gas=52000
+```
 
+**CSV** — first send a header line, then numeric rows:
+
+```
+roll,pitch,yaw,ax,ay,az,heading,temp,hum,pres,gas,lat,lon,alt,sats
+2.1,-5,143,0.01,0,1,143,22.4,41,1012.8,52000,44.47,-73.21,61,9
+```
+
+Not all fields are required. You can start with just IMU data and add sensors later.
+
+### Fields
+
+| Field | Aliases | Units |
+|-------|---------|-------|
+| `roll` / `pitch` / `yaw` | `r` / `p` / `y` | degrees |
+| `qw` / `qx` / `qy` / `qz` | — | quaternion |
+| `gx` / `gy` / `gz` | `gyroX/Y/Z` | deg/s |
+| `ax` / `ay` / `az` | `accelX` / `accel_x` | g |
+| `mx` / `my` / `mz` | `magX/Y/Z` | µT |
+| `heading` | `hdg` / `head` | degrees |
+| `temp` | `temperature` / `t` | °C |
+| `hum` | `humidity` / `rh` | % |
+| `pres` | `pressure` / `baro` / `hPa` | hPa |
+| `gas` | `voc` / `iaq` | Ω / kΩ |
+| `lat` / `lon` | `latitude` / `longitude` | decimal degrees |
+| `alt` | `altitude` | meters |
+| `sats` | `satellites` | count |
+
+**Orientation priority:** quaternion → roll/pitch/yaw → gyro integration
+
+**Heading priority:** heading → yaw → magnetic calculation (mx/my)
+
+## Repo structure
+
+```
+HERMES/
+├── index.html      # dashboard
+├── firmware/       # microcontroller code (not finished yet)
+├── hardware/       # KiCad + PCB files (not finished yet)
+└── README.md
+```
+
+## Firmware
+
+The firmware runs on an ATmega328 at 8 MHz. It reads:
+
+- ICM-20948 over I²C
+- BME680 over I²C
+- GPS over UART (NMEA)
+
+Then it prints telemetry over USB serial in one of the supported formats.
+
+This section will get updated once the final firmware is cleaned up and documented.
+
+## License
+
+Released under the **MIT License** — you're free to use, copy, modify, and distribute this project, including commercially, as long as the copyright notice and license text are included. See the [`LICENSE`](LICENSE) file for the full terms.
