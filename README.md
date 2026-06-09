@@ -1,6 +1,8 @@
-# HERMES
+<img width="6250" height="4181" alt="HERMES" src="https://github.com/user-attachments/assets/959b80b4-28ad-42a3-b10f-a88c06470388" />
 
-**Hardware Environmental & Rotational Motion Evaluation Sensor**
+# 
+
+## HERMES (**Hardware Environmental & Rotational Motion Evaluation Sensor**)
 
 HERMES is a USB-connected sensor board that reads motion, environmental, and GPS data and sends it to a computer in real time. The data is visualized in a browser dashboard that connects directly over Web Serial.
 
