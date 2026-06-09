@@ -141,4 +141,4 @@ This section will get updated once the final firmware is cleaned up and document
 
 ## License
 
-Not decided yet. Add a `LICENSE` file and update this section when you pick one (MIT / Apache / GPL / CERN-OHL, etc.).
+Released under the **MIT License** — you're free to use, copy, modify, and distribute this project, including commercially, as long as the copyright notice and license text are included. See the [`LICENSE`](LICENSE) file for the full terms.
