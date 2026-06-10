@@ -57,6 +57,8 @@ Web Serial only works in Chromium-based browsers on desktop: **Chrome, Edge, Bra
 
 Firefox, Safari, and mobile browsers will still load the page, but cannot connect to the board. Demo mode still works everywhere.
 
+The web dashboard can bo acessed at [`https://owenxman.github.io/HERMES/`](https://owenxman.github.io/HERMES/)
+
 ## Serial format
 
 The board prints one line per update over serial. The dashboard tries to auto-detect the format. You can use any of:
