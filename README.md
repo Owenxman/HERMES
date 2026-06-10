@@ -111,7 +111,7 @@ HERMES/
 ├── firmware/       # Microcontroller Code (not finished yet)
 ├── PCB/            # KiCad + PCB files
 ├── Production/     # Production Files
-├── CAD             # CAD Files for the Case
+├── CAD/            # CAD Files for the Case
 ├── index.html      # Dashboard
 ├── LICENSE         # MIT License
 └── README.md
