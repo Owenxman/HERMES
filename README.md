@@ -51,21 +51,6 @@ Everything runs in the browser. The board connects directly to your computer usi
 
 Open `index.html` in Chrome or Edge. Click **Connect device**, select the FT231XS serial port, and set the baud rate (default is `115200`).
 
-### Hosting it
-
-Any static HTTPS host works — Web Serial requires HTTPS.
-
-**GitHub Pages**
-
-1. Put `index.html` in the root of the repo.
-2. Go to **Settings → Pages**.
-3. Set **Source: Deploy from branch**, **Branch: `main` / `/root`**, then **Save**.
-4. The site will be live at `https://owenxman.github.io/HERMES/`.
-
-Every push updates the site automatically.
-
-Other options: Cloudflare Pages, Netlify, Vercel.
-
 ### Browser support
 
 Web Serial only works in Chromium-based browsers on desktop: **Chrome, Edge, Brave, Opera**.
