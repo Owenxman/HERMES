@@ -108,9 +108,12 @@ Not all fields are required. You can start with just IMU data and add sensors la
 
 ```
 HERMES/
-├── index.html      # dashboard
-├── firmware/       # microcontroller code (not finished yet)
-├── hardware/       # KiCad + PCB files (not finished yet)
+├── firmware/       # Microcontroller Code (not finished yet)
+├── PCB/            # KiCad + PCB files
+├── Production/     # Production Files
+├── CAD             # CAD Files for the Case
+├── index.html      # Dashboard
+├── LICENSE         # MIT License
 └── README.md
 ```
 
